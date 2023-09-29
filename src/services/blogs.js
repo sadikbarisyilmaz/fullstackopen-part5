@@ -22,3 +22,34 @@ export const createBlog = async (data, token) => {
   }
 
 }
+export const deleteBlog = async (token, id) => {
+  const config = {
+    headers: { Authorization: `Bearer ${token}` },
+  }
+
+  try {
+    const request = axios.delete(`${baseUrl}/${id}`, config)
+    const response = await request
+    return response
+
+  } catch (error) {
+    return error.response
+  }
+
+}
+
+export const updateBlog = async (data, token, id) => {
+  const config = {
+    headers: { Authorization: `Bearer ${token}` },
+  }
+
+  try {
+    const request = axios.put(`${baseUrl}/${id}`, data, config)
+    const response = await request
+    return response
+
+  } catch (error) {
+    return error.response
+  }
+
+}

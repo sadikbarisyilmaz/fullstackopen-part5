@@ -17,13 +17,20 @@ const App = () => {
     author: "",
     url: "",
   });
+
   const [loginFormData, setLoginFormData] = useState({
     username: "",
     password: "",
   });
 
   useEffect(() => {
-    getAll().then((blogs) => setBlogs(blogs));
+    const getBlogs = async () => {
+      const blogs = await getAll();
+      setBlogs(blogs);
+    };
+
+    getBlogs();
+
     if (window.localStorage.getItem("loggedUser")) {
       const loggedUser = window.localStorage.getItem("loggedUser");
       setUser(JSON.parse(loggedUser));
@@ -35,7 +42,7 @@ const App = () => {
     setNotification(type);
     setTimeout(() => {
       setErrorMessage(null);
-    }, 2000);
+    }, 1000);
   };
 
   const handleLogin = async (e) => {
@@ -59,7 +66,7 @@ const App = () => {
   const logout = () => {
     setUser(null);
     window.localStorage.removeItem("loggedUser");
-    showNotification("Logged Out", "success");
+    showNotification("Logout Successful", "success");
   };
 
   const handleSubmit = async (e) => {
@@ -76,7 +83,8 @@ const App = () => {
         url: "",
       });
       setshowBlogForm(false);
-      getAll().then((blogs) => setBlogs(blogs));
+      const blogs = await getAll();
+      setBlogs(blogs);
     } else {
       showNotification(response.data.error, "fail");
     }
@@ -105,14 +113,28 @@ const App = () => {
                   blogForm={blogForm}
                   handleSubmit={handleSubmit}
                 />
-                <button onClick={() => setshowBlogForm(false)}>Cancel</button>
+                <button
+                  onClick={() => {
+                    setshowBlogForm(false);
+                  }}
+                >
+                  Cancel
+                </button>
               </>
             )}
             <br />
             <h3>Blogs</h3>
-            {blogs.map((blog) => (
-              <Blog key={blog.id} blog={blog} />
-            ))}
+            {blogs
+              .sort((a, b) => b.likes - a.likes)
+              .map((blog) => (
+                <Blog
+                  key={blog.id}
+                  blog={blog}
+                  setBlogs={setBlogs}
+                  token={user.token}
+                  showNotification={showNotification}
+                />
+              ))}
           </>
         )}
         <br />
