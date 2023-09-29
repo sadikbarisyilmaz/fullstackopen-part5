@@ -3,7 +3,8 @@ import { Blog } from "./components/Blog";
 import { createBlog, getAll } from "./services/blogs";
 import { login } from "./services/login";
 import { Notification } from "./components/Notification";
-
+import { LoginForm } from "./components/LoginForm";
+import { BlogForm } from "./components/BlogForm";
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
@@ -14,13 +15,15 @@ const App = () => {
     author: "",
     url: "",
   });
-  const [loginForm, setLoginForm] = useState({
+  const [loginFormData, setLoginFormData] = useState({
     username: "",
     password: "",
   });
+  const [showBlogForm, setshowBlogForm] = useState(false);
 
   useEffect(() => {
     getAll().then((blogs) => setBlogs(blogs));
+
     if (window.localStorage.getItem("loggedUser")) {
       const loggedUser = window.localStorage.getItem("loggedUser");
       setUser(JSON.parse(loggedUser));
@@ -37,15 +40,15 @@ const App = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const response = await login(loginForm);
+    const response = await login(loginFormData);
 
     if (response.status === 200) {
       showNotification("Login Successfull", "success");
       const cridentials = response.data;
       setUser(cridentials);
       window.localStorage.setItem("loggedUser", JSON.stringify(cridentials));
-
-      setLoginForm({
+      setshowBlogForm(false);
+      setLoginFormData({
         username: "",
         password: "",
       });
@@ -93,57 +96,20 @@ const App = () => {
             <h2>{user.name} logged in</h2>
             <button onClick={logout}>Logout</button>
             <br />
-            <h3>Create new</h3>
-            <form onSubmit={handleSubmit}>
-              <div>
-                Title
-                <br />
-                <input
-                  type="text"
-                  value={blogForm.title}
-                  name="Title"
-                  onChange={({ target }) =>
-                    setBlogForm((prev) => ({
-                      ...prev,
-                      title: target.value,
-                    }))
-                  }
+            {!showBlogForm && (
+              <button onClick={() => setshowBlogForm(true)}>New Blog</button>
+            )}
+            {showBlogForm && (
+              <>
+                <BlogForm
+                  setBlogForm={setBlogForm}
+                  blogForm={blogForm}
+                  handleSubmit={handleSubmit}
                 />
-              </div>
-
-              <div>
-                Author
-                <br />
-                <input
-                  type="text"
-                  value={blogForm.author}
-                  name="author"
-                  onChange={({ target }) =>
-                    setBlogForm((prev) => ({
-                      ...prev,
-                      author: target.value,
-                    }))
-                  }
-                />
-              </div>
-              <div>
-                Url
-                <br />
-                <input
-                  type="text"
-                  value={blogForm.url}
-                  name="url"
-                  onChange={({ target }) =>
-                    setBlogForm((prev) => ({
-                      ...prev,
-                      url: target.value,
-                    }))
-                  }
-                />
-              </div>
-              <br />
-              <button type="submit">Submit</button>
-            </form>
+                <button onClick={() => setshowBlogForm(false)}>Cancel</button>
+              </>
+            )}
+            <br />
             <h3>Blogs</h3>
             {blogs.map((blog) => (
               <Blog key={blog.id} blog={blog} />
@@ -154,41 +120,11 @@ const App = () => {
 
         {!user && (
           <>
-            <h1>Log in to application</h1>
-            <form onSubmit={handleLogin}>
-              <div>
-                Username
-                <br />
-                <input
-                  type="text"
-                  value={loginForm.username}
-                  name="Username"
-                  onChange={({ target }) =>
-                    setLoginForm((prev) => ({
-                      ...prev,
-                      username: target.value,
-                    }))
-                  }
-                />
-              </div>
-              <div>
-                Password
-                <br />
-                <input
-                  type="password"
-                  value={loginForm.password}
-                  name="Password"
-                  onChange={({ target }) =>
-                    setLoginForm((prev) => ({
-                      ...prev,
-                      password: target.value,
-                    }))
-                  }
-                />
-              </div>
-              <br />
-              <button type="submit">login</button>
-            </form>
+            <LoginForm
+              handleLogin={handleLogin}
+              loginFormData={loginFormData}
+              setLoginFormData={setLoginFormData}
+            />
           </>
         )}
       </div>
