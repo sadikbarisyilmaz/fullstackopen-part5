@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { deleteBlog, getAll, updateBlog } from "../services/blogs";
 
-export const Blog = ({ blog, setBlogs, token, showNotification }) => {
+export const Blog = ({ blog, setBlogs, token, showNotification, username }) => {
   const [toggle, setToggle] = useState(false);
   const blogStyle = {
     padding: 10,
@@ -64,7 +64,9 @@ export const Blog = ({ blog, setBlogs, token, showNotification }) => {
             Likes: {blog.likes} <button onClick={handleLike}>Like</button>
           </div>
           <div>Created by: {blog.user.name}</div>
-          <button onClick={handleDelete}>Remove</button>
+          {username === blog.user.username && (
+            <button onClick={handleDelete}>Remove</button>
+          )}
         </div>
       )}
     </div>

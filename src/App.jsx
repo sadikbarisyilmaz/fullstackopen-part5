@@ -22,7 +22,7 @@ const App = () => {
     username: "",
     password: "",
   });
-
+  console.log(user);
   useEffect(() => {
     const getBlogs = async () => {
       const blogs = await getAll();
@@ -134,6 +134,7 @@ const App = () => {
                   setBlogs={setBlogs}
                   token={user.token}
                   showNotification={showNotification}
+                  username={user.username}
                 />
               ))}
           </>
