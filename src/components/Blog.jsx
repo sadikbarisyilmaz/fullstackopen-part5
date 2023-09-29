@@ -43,7 +43,8 @@ export const Blog = ({ blog, setBlogs, token, showNotification }) => {
   return (
     <div style={blogStyle}>
       <div>
-        {blog.title} - {blog.author}
+        <span className="title">{blog.title}</span> -{" "}
+        <span className="author">{blog.author}</span>
         <button
           style={{ marginLeft: 5 }}
           onClick={() => (toggle ? setToggle(false) : setToggle(true))}
@@ -51,19 +52,21 @@ export const Blog = ({ blog, setBlogs, token, showNotification }) => {
           {toggle ? "Hide" : "View"}
         </button>
       </div>
-      <div style={{ display: ` ${toggle ? "inline" : "none"} ` }}>
+      {toggle && (
         <div>
-          URL:
-          <a href={blog.url} target="_blank">
-            {blog.url}
-          </a>
+          <div>
+            URL:
+            <a href={blog.url} className="url" target="_blank">
+              {blog.url}
+            </a>
+          </div>
+          <div>
+            Likes: {blog.likes} <button onClick={handleLike}>Like</button>
+          </div>
+          <div>Created by: {blog.user.name}</div>
+          <button onClick={handleDelete}>Remove</button>
         </div>
-        <div>
-          Likes: {blog.likes} <button onClick={handleLike}>Like</button>
-        </div>
-        <div>Created by: {blog.user.name}</div>
-        <button onClick={handleDelete}>Remove</button>
-      </div>
+      )}
     </div>
   );
 };
