@@ -5,11 +5,13 @@ import { login } from "./services/login";
 import { Notification } from "./components/Notification";
 import { LoginForm } from "./components/LoginForm";
 import { BlogForm } from "./components/BlogForm";
+
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [notification, setNotification] = useState(null);
+  const [showBlogForm, setshowBlogForm] = useState(false);
   const [blogForm, setBlogForm] = useState({
     title: "",
     author: "",
@@ -19,11 +21,9 @@ const App = () => {
     username: "",
     password: "",
   });
-  const [showBlogForm, setshowBlogForm] = useState(false);
 
   useEffect(() => {
     getAll().then((blogs) => setBlogs(blogs));
-
     if (window.localStorage.getItem("loggedUser")) {
       const loggedUser = window.localStorage.getItem("loggedUser");
       setUser(JSON.parse(loggedUser));
@@ -47,7 +47,6 @@ const App = () => {
       const cridentials = response.data;
       setUser(cridentials);
       window.localStorage.setItem("loggedUser", JSON.stringify(cridentials));
-      setshowBlogForm(false);
       setLoginFormData({
         username: "",
         password: "",
@@ -65,9 +64,7 @@ const App = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const response = await createBlog(blogForm, user.token);
-
     if (response.status === 201) {
       showNotification(
         `A new blog "${blogForm.title}" by "${blogForm.author}" added`,
@@ -78,6 +75,8 @@ const App = () => {
         author: "",
         url: "",
       });
+      setshowBlogForm(false);
+      getAll().then((blogs) => setBlogs(blogs));
     } else {
       showNotification(response.data.error, "fail");
     }
