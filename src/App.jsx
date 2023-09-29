@@ -11,7 +11,7 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [notification, setNotification] = useState(null);
-  const [showBlogForm, setshowBlogForm] = useState(false);
+  const [showBlogForm, setShowBlogForm] = useState(false);
   const [blogForm, setBlogForm] = useState({
     title: "",
     author: "",
@@ -82,7 +82,7 @@ const App = () => {
         author: "",
         url: "",
       });
-      setshowBlogForm(false);
+      setShowBlogForm(false);
       const blogs = await getAll();
       setBlogs(blogs);
     } else {
@@ -100,11 +100,12 @@ const App = () => {
 
         {user && (
           <>
-            <h2>{user.name} logged in</h2>
-            <button onClick={logout}>Logout</button>
-            <br />
+            <h2>
+              {user.name} logged in <button onClick={logout}>Logout</button>
+            </h2>
+
             {!showBlogForm && (
-              <button onClick={() => setshowBlogForm(true)}>New Blog</button>
+              <button onClick={() => setShowBlogForm(true)}>New Blog</button>
             )}
             {showBlogForm && (
               <>
@@ -115,7 +116,7 @@ const App = () => {
                 />
                 <button
                   onClick={() => {
-                    setshowBlogForm(false);
+                    setShowBlogForm(false);
                   }}
                 >
                   Cancel
