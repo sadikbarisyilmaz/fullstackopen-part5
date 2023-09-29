@@ -11,8 +11,14 @@ export const createBlog = async (data, token) => {
   const config = {
     headers: { Authorization: `Bearer ${token}` },
   }
-  console.log(config);
-  const request = axios.post(baseUrl, data, config)
-  const response = await request
-  console.log(response);
+
+  try {
+    const request = axios.post(baseUrl, data, config)
+    const response = await request
+    return response
+
+  } catch (error) {
+    return error.response
+  }
+
 }

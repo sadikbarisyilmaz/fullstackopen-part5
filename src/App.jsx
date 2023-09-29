@@ -8,6 +8,7 @@ const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [notification, setNotification] = useState(null);
   const [blogForm, setBlogForm] = useState({
     title: "",
     author: "",
@@ -26,43 +27,69 @@ const App = () => {
     }
   }, []);
 
+  const showNotification = (msg, type) => {
+    setErrorMessage(msg);
+    setNotification(type);
+    setTimeout(() => {
+      setErrorMessage(null);
+    }, 2000);
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
-    const cridentials = await login(loginForm);
-    setUser(cridentials);
+    const response = await login(loginForm);
 
-    window.localStorage.setItem("loggedUser", JSON.stringify(cridentials));
+    if (response.status === 200) {
+      showNotification("Login Successfull", "success");
+      const cridentials = response.data;
+      setUser(cridentials);
+      window.localStorage.setItem("loggedUser", JSON.stringify(cridentials));
 
-    setLoginForm({
-      username: "",
-      password: "",
-    });
+      setLoginForm({
+        username: "",
+        password: "",
+      });
+    } else {
+      showNotification(response.data.error, "fail");
+    }
   };
 
   const logout = () => {
     setUser(null);
     window.localStorage.removeItem("loggedUser");
+    showNotification("Logged Out", "success");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    createBlog(blogForm, user.token);
-    setBlogForm({
-      title: "",
-      author: "",
-      url: "",
-    });
+
+    const response = await createBlog(blogForm, user.token);
+
+    if (response.status === 201) {
+      showNotification(
+        `A new blog "${blogForm.title}" by "${blogForm.author}" added`,
+        "success"
+      );
+      setBlogForm({
+        title: "",
+        author: "",
+        url: "",
+      });
+    } else {
+      showNotification(response.data.error, "fail");
+    }
   };
 
   return (
     <div>
       <div>
         <h1>Blogssss</h1>
-        <Notification message={errorMessage} />
+        {errorMessage && (
+          <Notification type={notification} message={errorMessage} />
+        )}
 
         {user && (
           <>
-            <h1>Blogssss</h1>
             <h2>{user.name} logged in</h2>
             <button onClick={logout}>Logout</button>
             <br />
@@ -73,7 +100,7 @@ const App = () => {
                 <br />
                 <input
                   type="text"
-                  // value={loginForm.username}
+                  value={blogForm.title}
                   name="Title"
                   onChange={({ target }) =>
                     setBlogForm((prev) => ({
@@ -89,7 +116,7 @@ const App = () => {
                 <br />
                 <input
                   type="text"
-                  // value={loginForm.author}
+                  value={blogForm.author}
                   name="author"
                   onChange={({ target }) =>
                     setBlogForm((prev) => ({
@@ -104,7 +131,7 @@ const App = () => {
                 <br />
                 <input
                   type="text"
-                  // value={loginForm.url}
+                  value={blogForm.url}
                   name="url"
                   onChange={({ target }) =>
                     setBlogForm((prev) => ({
@@ -134,7 +161,7 @@ const App = () => {
                 <br />
                 <input
                   type="text"
-                  // value={loginForm.username}
+                  value={loginForm.username}
                   name="Username"
                   onChange={({ target }) =>
                     setLoginForm((prev) => ({
@@ -149,7 +176,7 @@ const App = () => {
                 <br />
                 <input
                   type="password"
-                  // value={loginForm.password}
+                  value={loginForm.password}
                   name="Password"
                   onChange={({ target }) =>
                     setLoginForm((prev) => ({
