@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Blog } from "./components/Blog";
-import { createBlog, getAll } from "./services/blogs";
+import { createBlog, getAll, updateBlog } from "./services/blogs";
 import { login } from "./services/login";
 import { Notification } from "./components/Notification";
 import { LoginForm } from "./components/LoginForm";
@@ -12,17 +12,12 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [notification, setNotification] = useState(null);
   const [showBlogForm, setShowBlogForm] = useState(false);
-  const [blogForm, setBlogForm] = useState({
-    title: "",
-    author: "",
-    url: "",
-  });
 
   const [loginFormData, setLoginFormData] = useState({
     username: "",
     password: "",
   });
-  console.log(user);
+
   useEffect(() => {
     const getBlogs = async () => {
       const blogs = await getAll();
@@ -36,6 +31,19 @@ const App = () => {
       setUser(JSON.parse(loggedUser));
     }
   }, []);
+
+  const handleLike = async (blog, token) => {
+    const likedBlog = blog;
+    likedBlog.likes += 1;
+    const response = await updateBlog(likedBlog, token, blog.id);
+    const blogs = await getAll();
+    setBlogs(blogs);
+    if (response.status === 201) {
+      showNotification(`Liked "${blog.title}" by ${blog.author}`, "success");
+    } else {
+      showNotification(`Like failed`, "fail");
+    }
+  };
 
   const showNotification = (msg, type) => {
     setErrorMessage(msg);
@@ -69,8 +77,7 @@ const App = () => {
     showNotification("Logout Successful", "success");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (blogForm, setBlogForm) => {
     const response = await createBlog(blogForm, user.token);
     if (response.status === 201) {
       showNotification(
@@ -85,6 +92,7 @@ const App = () => {
       setShowBlogForm(false);
       const blogs = await getAll();
       setBlogs(blogs);
+      return blogForm;
     } else {
       showNotification(response.data.error, "fail");
     }
@@ -109,11 +117,7 @@ const App = () => {
             )}
             {showBlogForm && (
               <>
-                <BlogForm
-                  setBlogForm={setBlogForm}
-                  blogForm={blogForm}
-                  handleSubmit={handleSubmit}
-                />
+                <BlogForm handleSubmit={handleSubmit} />
                 <button
                   onClick={() => {
                     setShowBlogForm(false);
@@ -135,6 +139,7 @@ const App = () => {
                   token={user.token}
                   showNotification={showNotification}
                   username={user.username}
+                  handleLike={handleLike}
                 />
               ))}
           </>

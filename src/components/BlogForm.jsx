@@ -1,8 +1,20 @@
-export const BlogForm = ({ blogForm, setBlogForm, handleSubmit }) => {
+import { useState } from "react";
+
+export const BlogForm = ({ handleSubmit }) => {
+  const [blogForm, setBlogForm] = useState({
+    title: "",
+    author: "",
+    url: "",
+  });
+  const fireSubmit = (e) => {
+    e.preventDefault();
+    handleSubmit(blogForm, setBlogForm);
+  };
+  console.log(blogForm);
   return (
     <div>
       <h3>Create new</h3>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={fireSubmit}>
         <div>
           Title
           <br />
@@ -10,6 +22,7 @@ export const BlogForm = ({ blogForm, setBlogForm, handleSubmit }) => {
             type="text"
             value={blogForm.title}
             name="Title"
+            placeholder="Title"
             onChange={({ target }) =>
               setBlogForm((prev) => ({
                 ...prev,
@@ -26,6 +39,7 @@ export const BlogForm = ({ blogForm, setBlogForm, handleSubmit }) => {
             type="text"
             value={blogForm.author}
             name="author"
+            placeholder="author"
             onChange={({ target }) =>
               setBlogForm((prev) => ({
                 ...prev,
@@ -41,6 +55,7 @@ export const BlogForm = ({ blogForm, setBlogForm, handleSubmit }) => {
             type="text"
             value={blogForm.url}
             name="url"
+            placeholder="url"
             onChange={({ target }) =>
               setBlogForm((prev) => ({
                 ...prev,

@@ -1,7 +1,14 @@
 import { useState } from "react";
-import { deleteBlog, getAll, updateBlog } from "../services/blogs";
+import { deleteBlog, getAll } from "../services/blogs";
 
-export const Blog = ({ blog, setBlogs, token, showNotification, username }) => {
+export const Blog = ({
+  blog,
+  setBlogs,
+  token,
+  showNotification,
+  username,
+  handleLike,
+}) => {
   const [toggle, setToggle] = useState(false);
   const blogStyle = {
     padding: 10,
@@ -27,19 +34,6 @@ export const Blog = ({ blog, setBlogs, token, showNotification, username }) => {
     }
   };
 
-  const handleLike = async () => {
-    const likedBlog = blog;
-    likedBlog.likes += 1;
-    const response = await updateBlog(likedBlog, token, blog.id);
-    const blogs = await getAll();
-    setBlogs(blogs);
-    if (response.status === 201) {
-      showNotification(`Liked "${blog.title}" by ${blog.author}`, "success");
-    } else {
-      showNotification(`Like failed`, "fail");
-    }
-  };
-
   return (
     <div style={blogStyle}>
       <div>
@@ -61,7 +55,8 @@ export const Blog = ({ blog, setBlogs, token, showNotification, username }) => {
             </a>
           </div>
           <div>
-            Likes: {blog.likes} <button onClick={handleLike}>Like</button>
+            Likes:<span className="likes"> {blog.likes} </span>
+            <button onClick={() => handleLike(blog, token)}>Like</button>
           </div>
           <div>Created by: {blog.user.name}</div>
           {username === blog.user.username && (
