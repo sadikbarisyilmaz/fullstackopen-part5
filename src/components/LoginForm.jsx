@@ -7,6 +7,7 @@ export const LoginForm = ({ handleLogin, loginFormData, setLoginFormData }) => {
           Username
           <br />
           <input
+            id="username"
             type="text"
             value={loginFormData.username}
             name="Username"
@@ -22,6 +23,7 @@ export const LoginForm = ({ handleLogin, loginFormData, setLoginFormData }) => {
           Password
           <br />
           <input
+            id="password"
             type="password"
             value={loginFormData.password}
             name="Password"
@@ -34,7 +36,9 @@ export const LoginForm = ({ handleLogin, loginFormData, setLoginFormData }) => {
           />
         </div>
         <br />
-        <button type="submit">Login</button>
+        <button id="login-button" type="submit">
+          Login
+        </button>
       </form>
     </>
   );

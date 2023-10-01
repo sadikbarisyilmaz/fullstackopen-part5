@@ -129,19 +129,21 @@ const App = () => {
             )}
             <br />
             <h3>Blogs</h3>
-            {blogs
-              .sort((a, b) => b.likes - a.likes)
-              .map((blog) => (
-                <Blog
-                  key={blog.id}
-                  blog={blog}
-                  setBlogs={setBlogs}
-                  token={user.token}
-                  showNotification={showNotification}
-                  username={user.username}
-                  handleLike={handleLike}
-                />
-              ))}
+            <div className="blog">
+              {blogs
+                .sort((a, b) => b.likes - a.likes)
+                .map((blog) => (
+                  <Blog
+                    key={blog.id}
+                    blog={blog}
+                    setBlogs={setBlogs}
+                    token={user.token}
+                    showNotification={showNotification}
+                    username={user.username}
+                    handleLike={handleLike}
+                  />
+                ))}
+            </div>
           </>
         )}
         <br />

@@ -35,7 +35,7 @@ export const Blog = ({
   };
 
   return (
-    <div style={blogStyle}>
+    <div className="indv-blog" style={blogStyle}>
       <div>
         <span className="title">{blog.title}</span> -{" "}
         <span className="author">{blog.author}</span>
@@ -60,7 +60,9 @@ export const Blog = ({
           </div>
           <div>Created by: {blog.user.name}</div>
           {username === blog.user.username && (
-            <button onClick={handleDelete}>Remove</button>
+            <button id="likeButton" onClick={handleDelete}>
+              Remove
+            </button>
           )}
         </div>
       )}
